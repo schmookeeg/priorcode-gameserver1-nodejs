@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="/socketcluster.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <style type="text/css">
+    .control
+    {
+      float: left;
+      padding: 20px;
+      cursor: pointer;
+    }
+  </style>
+  </head>
+  <body>
+    <div class="content">
+    <!--
+      <img src="img/logo.png" alt="SocketCluster logo">
+      <p>Thank you for installing SocketCluster <span id="face-container">:)</span><br />
+      For documentation, go to <a href="http://socketcluster.io/">http://socketcluster.io/</a></p>
+    -->
+      <div id="games">
+      
+      </div>
+
+      <div id="table">
+        <div class='seat seat0'></div>
+        <div class='seat seat1'></div>
+        <div class='seat seat2'></div>
+        <div class='seat seat3'></div>
+        <div class='seat seat4'></div>
+        <div class='seat seat5'></div>
+        <div class='seat seat6'></div>
+        <div class='seat seat7'></div>
+        <div class='seat seat8'></div>
+        <div class='seat seat9'></div>
+      </div>
+
+
+      <div id="controls">
+        <div class="control start">Start</div>
+        <div class="control bet">Bet</div>
+        <div class="control raise">Raise</div>
+        <div class="control fold">Fold</div>
+        <div class="control discard">Discard</div>
+      </div>
+      <br><br><br>
+      BTC Address You send from <input id="addrIn"><br>
+      BTC Address You receive from <input id="addrOut"><br>
+      PIN Code <input id="pin"><br>
+      <input id="submit" type="submit" value="Join">
+    </div>
+
+    <script type="text/javascript">
+
+$(function()
+{
+
+  
+
+  socket.on('gamelist', function(data)
+  {
+    console.log("got gamelist ", data);
+    $("#games").html("");
+    $(data).each(function(i,v)
+    {
+      $("#games").append("<div class='game game" + v.id + "' id='" + v.id + "'>" + v.name + "</div>");
+
+
+    });
+
+    $("#games .game").on("click", function(e)
+    {
+
+      var $target = $(e.target);
+      var data = {};
+      data.addrIn = $("#addrIn").val();
+      data.addrOut = $("#addrOut").val();
+      data.pin = $("#pin").val();
+      data.id = $target.attr("id");
+      console.log("clicked join ", data);
+      socket.emit('join',data);
+    });
+
+  });
+
+
+});
+
+      // Initiate the connection to the server
+      var socket = socketCluster.connect();
+      
+      socket.on('error', function (err) {
+        throw 'Socket error - ' + err;
+      });
+      
+      socket.on('connect', function () {
+        console.log('CONNECTED');
+        socket.emit('getgames');
+
+      });
+
+      socket.on('joined', function (data) {
+        console.log('joined', data);
+        gameData = data[0];
+        gameSubscribe = socket.subscribe(data[0].channel);
+        gameSubscribe.watch(function(data)
+        {
+          console.log("game data received", data);
+          if(data.action == "newPlayer")
+          {
+            gameData = data.data;
+            renderTable();
+          }
+        });
+        bindGameEvents();
+        renderTable();
+      });
+
+      var positiveFaces = [';p', ':D', ':)', ':3', ';)'];
+      var negativeFaces = [':(', '>:[', ':\'(', ':[', '>:\\'];
+      
+      var faces = positiveFaces;
+      var faceContainer = document.getElementById('face-container');
+      
+      socket.on('rand', function (data) {
+        var face = faces[data.rand];
+        console.log('RANDOM:', data.rand, face);
+        faceContainer.innerHTML = face;
+      });
+
+      socket.on('turn', function (data) {
+        console.log('TURN:', data);
+        setTimeout(function(){ socket.emit("next"); }, 100);
+      });
+      
+      var pongChannel = socket.subscribe('pong');
+      
+      pongChannel.on('subscribeFail', function (err) {
+        console.log('Failed to subscribe to PONG channel due to error: ' + err);
+      });
+      
+      var c = 0;
+      
+      pongChannel.watch(function (num) {
+        faces = c++ % 2 ? positiveFaces : negativeFaces;
+        console.log('PONG:', num);
+      });
+
+
+      function renderTable()
+      {
+        console.log("rendering table");
+        $(gameData.seats).each(function(i,v)
+        {
+          //console.log("data",i,v);
+          if(v > -1)
+          {
+            $(".seat" + i).html("Player " + gameData.players[v].socketId);
+          }
+          
+        })
+      }
+
+      function bindGameEvents()
+      {
+        $(".control.start").on("click", function(e)
+        {
+          socket.emit("start");
+        })
+      }
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="/socketcluster.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <style type="text/css">
+    .control
+    {
+      float: left;
+      padding: 20px;
+      cursor: pointer;
+    }
+  
+    #table .ante,
+    #table .play,
+    .control1,
+    .control2,
+    .discardcontrol,
+    #table.phase0 .cards
+
+    {
+      display: none;
+    }
+  
+    #table.phase1 .ante,
+    #table.phase3 .controls
+
+    {
+      display: block;
+    }
+  
+    
+
+    .card
+    {
+      width: 298px;
+      height: 418px;
+      float: left;
+      background-size: contain;
+    }
+
+    .status
+    {
+      width: 298px;
+      height: 418px;
+      border: 1px solid black;
+      display: block;
+      float: left;
+    }
+
+    .card0
+    {
+      background-image:url(/img/numdeck/0.png);
+    }
+    .card1
+    {
+      background-image:url(/img/numdeck/1.png);
+    }
+    .card2
+    {
+      background-image:url(/img/numdeck/2.png);
+    }
+    .card3
+    {
+      background-image:url(/img/numdeck/3.png);
+    }
+    .card4
+    {
+      background-image:url(/img/numdeck/4.png);
+    }
+    .card5
+    {
+      background-image:url(/img/numdeck/5.png);
+    }
+    .card6
+    {
+      background-image:url(/img/numdeck/6.png);
+    }
+    .card7
+    {
+      background-image:url(/img/numdeck/7.png);
+    }
+    .card8
+    {
+      background-image:url(/img/numdeck/8.png);
+    }
+    .card9
+    {
+      background-image:url(/img/numdeck/9.png);
+    }
+
+    .card10
+    {
+      background-image:url(/img/numdeck/10.png);
+    }
+    .card11
+    {
+      background-image:url(/img/numdeck/11.png);
+    }
+    .card12
+    {
+      background-image:url(/img/numdeck/12.png);
+    }
+    .card13
+    {
+      background-image:url(/img/numdeck/13.png);
+    }
+    .card14
+    {
+      background-image:url(/img/numdeck/14.png);
+    }
+    .card15
+    {
+      background-image:url(/img/numdeck/15.png);
+    }
+    .card16
+    {
+      background-image:url(/img/numdeck/16.png);
+    }
+    .card17
+    {
+      background-image:url(/img/numdeck/17.png);
+    }
+    .card18
+    {
+      background-image:url(/img/numdeck/18.png);
+    }
+    .card19
+    {
+      background-image:url(/img/numdeck/19.png);
+    }
+    .card20
+    {
+      background-image:url(/img/numdeck/20.png);
+    }
+    .card21
+    {
+      background-image:url(/img/numdeck/21.png);
+    }
+    .card22
+    {
+      background-image:url(/img/numdeck/22.png);
+    }
+    .card23
+    {
+      background-image:url(/img/numdeck/23.png);
+    }
+    .card24
+    {
+      background-image:url(/img/numdeck/24.png);
+    }
+    .card25
+    {
+      background-image:url(/img/numdeck/25.png);
+    }
+    .card26
+    {
+      background-image:url(/img/numdeck/26.png);
+    }
+    .card27
+    {
+      background-image:url(/img/numdeck/27.png);
+    }
+    .card28
+    {
+      background-image:url(/img/numdeck/28.png);
+    }
+    .card29
+    {
+      background-image:url(/img/numdeck/29.png);
+    }
+    .card30
+    {
+      background-image:url(/img/numdeck/30.png);
+    }
+    .card31
+    {
+      background-image:url(/img/numdeck/31.png);
+    }
+    .card32
+    {
+      background-image:url(/img/numdeck/32.png);
+    }
+    .card33
+    {
+      background-image:url(/img/numdeck/33.png);
+    }
+    .card34
+    {
+      background-image:url(/img/numdeck/34.png);
+    }
+    .card35
+    {
+      background-image:url(/img/numdeck/35.png);
+    }
+    .card36
+    {
+      background-image:url(/img/numdeck/36.png);
+    }
+    .card37
+    {
+      background-image:url(/img/numdeck/37.png);
+    }
+    .card38
+    {
+      background-image:url(/img/numdeck/38.png);
+    }
+    .card39
+    {
+      background-image:url(/img/numdeck/39.png);
+    }
+    .card40
+    {
+      background-image:url(/img/numdeck/40.png);
+    }
+    .card41
+    {
+      background-image:url(/img/numdeck/41.png);
+    }
+    .card42
+    {
+      background-image:url(/img/numdeck/42.png);
+    }
+    .card43
+    {
+      background-image:url(/img/numdeck/43.png);
+    }
+    .card44
+    {
+      background-image:url(/img/numdeck/44.png);
+    }
+    .card99
+    {
+      background-image:url(/img/numdeck/99.png);
+    }
+
+
+
+
+  </style>
+  </head>
+  <body>
+    <div class="content">
+    <!--
+      <img src="img/logo.png" alt="SocketCluster logo">
+      <p>Thank you for installing SocketCluster <span id="face-container">:)</span><br />
+      For documentation, go to <a href="http://socketcluster.io/">http://socketcluster.io/</a></p>
+    -->
+      
+
+      <div id="table" class="phase0">
+        
+
+        <div class="play">
+
+          <div class='seat seat0'></div>
+          <div class='seat seat1'></div>
+          <div class='seat seat2'></div>
+          <div class='seat seat3'></div>
+          <div class='seat seat4'></div>
+          <div class='seat seat5'></div>
+          <div class='seat seat6'></div>
+          <div class='seat seat7'></div>
+          <div class='seat seat8'></div>
+          <div class='seat seat9'></div>
+        </div>
+
+        <div class="cards">
+
+        </div>
+
+        
+
+        <div class="status">
+          <div class="misc">
+            Pot: <div class="pot"></div><br>
+            Balance: <div class="balances"></div><br>
+            <div class="message"></div><br><br>
+          </div>
+          <div class="ante">
+            <div class="antebutton">Ante Up</div>
+          </div>
+
+          <div class="controls">
+
+            <div class="control control1 check" action="check">Check</div>
+            <div class="control control1 bet" action="bet" amount="20">Bet</div>
+            <div class="control control1 fold" action="fold">Fold</div>
+
+            <div class="control control2 call" action="bet" amount="20">Call</div>
+            <div class="control control2 raise" action="raise" amount="40">Raise</div>
+            <div class="control control2 fold" action="fold">Fold</div>
+
+            <div class="control discardcontrol nodiscard" card="99">No Discard</div>
+          </div>
+
+          <div id="games">
+      
+          </div>
+          <br><br><br>
+          <div id="joindetails">
+            BTC Address You send from <input id="addrIn"><br>
+            BTC Address You receive from <input id="addrOut"><br>
+            PIN Code <input id="pin"><br>
+            Nickname <input id="nick"><br>
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      
+    </div>
+
+    <script type="text/javascript">
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function newGames(data)
+  {
+    console.log("gamelist", data);
+    $("#games").html("");
+    $(data.games).each(function(i,v)
+    {
+      $("#games").append("<div class='game game" + v.gameIx + "' gameIx='" + v.gameIx + "'>" + v.name + "</div>");
+    });
+
+
+    window.setTimeout(function()
+    {
+        $(".game" + getRandomInt(0,0)).click();
+    }, 500);
+
+
+    $("#games .game").on("click", function(e)
+    {
+
+      var $target = $(e.target);
+      var data = {};
+      data.addrIn = $("#addrIn").val();
+      data.addrOut = $("#addrOut").val();
+      data.pin = $("#pin").val();
+      data.gameIx = $target.attr("gameIx");
+      data.nick = $("#nick").val();
+      data.balance = 10000;
+
+      console.log("clicked join ", data);
+      socket.emit('join',data);
+    });
+  }
+
+function gameBroadcast(data)
+{
+  console.log("Game broadcast ", data);
+  if(data.action == "advance") // we are beginning the game.
+  {
+    if(data.game.phase == 1)
+    {
+      window.setTimeout(function()
+      {
+        console.log("click antebutton");
+          $(".antebutton").click();
+      }, 1500);
+    }
+    if(data.game.phase == 2)
+    {
+      // lets clear the cards addrOut
+      $(".cards").html("");
+      $(".message").html("");
+    }
+    if(data.game.phase == 4 || data.game.phase == 6)
+    {
+      window.setTimeout(function()
+      {
+        console.log("click nodiscard");
+          $(".nodiscard").click();
+      }, 1500);
+    }
+
+    console.log("Advance!");
+    $("#table").removeClass().addClass("phase" + data.game.phase);
+  }
+  if(data.action == 'deal') // we got a card 
+  {
+    $(".cards").append("<div class='card card" + data.card + "'>" + data.card + "<br><div class='discardcontrol' card='" + data.card + "'>Discard</div></div>");
+
+    $(".card" + data.card).on("click", function(e)
+    {
+      sendDiscard(e);
+    });
+
+  };
+  if(data.action == 'bet') // our turn to bet
+  {
+    console.log("bet time");
+    $(".control1, .control2").hide();
+    if (data.cumulativeBet == data.currentMax) // the pot is "right", so my choice is check, bet, or fold
+    {
+      $(".control1").show();
+    }
+
+    if (data.cumulativeBet < data.currentMax) // I've been bet or raised. My choice is to call or raise or fold. 
+    {
+      $(".control2").show();
+      $(".control2.call").attr("amount", (data.currentMax - data.cumulativeBet)).html("Call " + (data.currentMax - data.cumulativeBet));
+      $(".control2.raise").attr("amount", Number((data.currentMax - data.cumulativeBet)+20)).html("Raise " + (Number(data.currentMax - data.cumulativeBet)+20));
+
+      
+
+    }
+
+    window.setTimeout(function()
+    {
+      console.log("click check");
+      if(getRandomInt(0,2)==0)
+      {
+        $(".control1.check").click();
+      }
+      else
+      {
+        $(".control1.check").click();
+      }
+    }, 500);
+
+  }
+  if(data.action == 'discard') // our turn to discard
+  {
+    $(".discardcontrol").show();
+  }
+  if(data.action == "endgame")
+  {
+    if(data.game.winner == playerPtr)
+    {
+      $(".message").html("Winner!<br><br>Rank: " + data.game.endHands[playerPtr].handRank);
+    }
+  }
+
+  if(data.action == "update")
+  {
+    // update the table
+    $(".pot").html(data.game.potBalance);
+
+    $(".balances").html("");
+    $(data.balances).each(function(i,v)
+    {
+      $(".balances").append("<div>Player " + v.nick + ": " + v.balance + "</div>");
+    })
+  }
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function gameJoined(data)
+{
+  console.log("joined", data);
+
+  playerPtr = data.playerPtr;
+
+  $("#games").hide();
+  $("#joindetails").hide();
+  $("#table").show();
+
+  // stop watching the gameListSub
+  gameListSub.unsubscribe('gamelist');
+
+  gameSub = socket.subscribe(data.game.channel); // start listening to this game
+  gameSub.watch(gameBroadcast);
+
+  socket.on('game',gameBroadcast);
+
+  bindActions();
+}
+
+function bindActions()
+{
+  $(".antebutton").on("click", function(e)
+  {
+    console.log("ante click");
+    socket.emit('action',{"action":"ante"});
+  });
+
+  $(".control1, .control2").on("click", function(e)
+  {
+    $(".control1,.control2").hide();
+    var $target = $(e.target);
+    socket.emit('action', {"action":"bet","bet":$target.attr("action"), "amount":$target.attr("amount")});
+    console.log("sent bet", {"action":"bet","bet":$target.attr("action"), "amount":$target.attr("amount")});
+  });
+
+  $(".discardcontrol").on("click", function(e)
+  {
+    sendDiscard(e);
+  });
+
+  socket.on('anted', function()
+  {
+    $(".phase1").removeClass().addClass("phase2");
+  })
+}
+
+function sendDiscard(e)
+{
+  $(".discardcontrol").hide();
+  var $target = $(e.target);
+  socket.emit('action', {"action":"discard","card":$target.attr("card")});
+  console.log("sent bet", {"action":"discard","card":$target.attr("card")});
+  if($target.attr("card") != 99)
+  {
+    $(".card" + $target.attr("card")).hide();
+  }
+}
+
+
+$(function()
+{
+
+  $("#nick").val("Player " + randomIntFromInterval(1,10));
+
+  socket.on('gamelist', function(data)
+  {
+    newGames(data);
+  });
+
+
+});
+
+  // Initiate the connection to the server
+  var socket = socketCluster.connect();
+  
+  socket.on('error', function (err) {
+    throw 'Socket error - ' + err;
+  });
+  
+  socket.on('connect', function () {
+    console.log('CONNECTED');
+    socket.emit('getgames');
+  });
+
+  socket.on('joined', gameJoined);
+
+
+  
+  gameListSub = socket.subscribe('gamelist');
+        
+  gameListSub.watch(newGames);
+
+
+    </script>
+  </body>
+</html>
